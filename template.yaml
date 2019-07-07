@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  omni-serverless
+
+  Sample SAM Template for omni-serverless
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  CuencaShippingFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: cuenca_shipping/
+      Handler: app.lambda_handler
+      Runtime: python3.7
+      Environment:
+        Variables:
+          MONGO_URI: mongodb://192.168.0.111:27017/
+          CORS_ORIGIN: http://localhost:3333
+      Events:
+        CuencaShipping:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /cuenca-shipping/address
+            Method: post
+        CuencaShippingCors:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /cuenca-shipping/address
+            Method: options
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  CuencaShippingApi:
+    Description: "API Gateway endpoint URL for Prod stage for Cuenca Shipping function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+  CuencaShippingFunction:
+    Description: "Cuenca Shipping Lambda Function ARN"
+    Value: !GetAtt CuencaShippingFunction.Arn
+  CuencaShippingFunctionIamRole:
+    Description: "Implicit IAM Role created for Cuenca Shipping function"
+    Value: !GetAtt CuencaShippingFunctionRole.Arn
