@@ -12,7 +12,7 @@ class CuencaShipping(DynamicDocument):
     longitude = StringField(required=True)
     externalNumber = StringField(required=True)
     internalNumber = StringField()
-    comment = StringField(required=True)
+    comment = StringField()
     googleResult = DictField(required=True)
 
 

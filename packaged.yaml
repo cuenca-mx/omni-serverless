@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'omni-serverless
+
+  Sample SAM Template for omni-serverless
+
+  '
+Globals:
+  Function:
+    Timeout: 3
+Outputs:
+  CuencaShippingApi:
+    Description: API Gateway endpoint URL for Prod stage for Cuenca Shipping function
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/
+  CuencaShippingFunction:
+    Description: Cuenca Shipping Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - CuencaShippingFunction
+      - Arn
+  CuencaShippingFunctionIamRole:
+    Description: Implicit IAM Role created for Cuenca Shipping function
+    Value:
+      Fn::GetAtt:
+      - CuencaShippingFunctionRole
+      - Arn
+Resources:
+  CuencaShippingFunction:
+    Properties:
+      CodeUri: s3://omni-serverless.cuenca.io/ec309a5eeaf7ae0f469ccf284f6ceba2
+      Environment:
+        Variables:
+          CORS_ORIGIN: http://localhost:3333
+          MONGO_URI: mongodb://192.168.0.111:27017/
+      Events:
+        CuencaShipping:
+          Properties:
+            Method: post
+            Path: /cuenca-shipping/address
+          Type: Api
+        CuencaShippingCors:
+          Properties:
+            Method: options
+            Path: /cuenca-shipping/address
+          Type: Api
+      Handler: app.lambda_handler
+      Runtime: python3.7
+    Type: AWS::Serverless::Function
+Transform: AWS::Serverless-2016-10-31
