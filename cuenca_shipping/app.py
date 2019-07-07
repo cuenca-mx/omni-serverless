@@ -5,6 +5,7 @@ from mongoengine import *
 connect('db', host=os.environ['MONGO_URI'])
 
 class CuencaShipping(DynamicDocument):
+    clientId = StringField(required=True)
     street = StringField(required=True)
     neighborhood = StringField(required=True)
     zipCode = StringField(required=True)
