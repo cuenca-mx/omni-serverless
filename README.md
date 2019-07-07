@@ -6,7 +6,7 @@ This is a sample template for omni-serverless - Below is a brief explanation of 
 .
 ├── README.md                   <-- This instructions file
 ├── event.json                  <-- API Gateway Proxy Integration event payload
-├── hello_world                 <-- Source code for a lambda function
+├── cuenca_shipping                 <-- Source code for a lambda function
 │   ├── __init__.py
 │   ├── app.py                  <-- Lambda function code
 │   ├── requirements.txt        <-- Lambda function code
@@ -30,7 +30,7 @@ This is a sample template for omni-serverless - Below is a brief explanation of 
 **Invoking function locally using a local sample payload**
 
 ```bash
-sam local invoke HelloWorldFunction --event event.json
+sam local invoke CuencaShippingFunction --event event.json
 ```
 
 **Invoking function locally through local API Gateway**
@@ -39,18 +39,18 @@ sam local invoke HelloWorldFunction --event event.json
 sam local start-api
 ```
 
-If the previous command ran successfully you should now be able to hit the following local endpoint to invoke your function `http://localhost:3000/hello`
+If the previous command ran successfully you should now be able to hit the following local endpoint to invoke your function `http://localhost:3000/cuenca-shipping/address`
 
 **SAM CLI** is used to emulate both Lambda and API Gateway locally and uses our `template.yaml` to understand how to bootstrap this environment (runtime, where the source code is, etc.) - The following excerpt is what the CLI will read in order to initialize an API and its routes:
 
 ```yaml
 ...
 Events:
-    HelloWorld:
+    CuencaShipping:
         Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
         Properties:
-            Path: /hello
-            Method: get
+            Path: /cuenca-shipping/address
+            Method: post
 ```
 
 ## Packaging and deployment
@@ -59,10 +59,10 @@ AWS Lambda Python runtime requires a flat folder with all dependencies including
 
 ```yaml
 ...
-    HelloWorldFunction:
+    CuencaShippingFunction:
         Type: AWS::Serverless::Function
         Properties:
-            CodeUri: hello_world/
+            CodeUri: cuenca_shipping/
             ...
 ```
 
@@ -96,7 +96,7 @@ After deployment is complete you can run the following command to retrieve the A
 ```bash
 aws cloudformation describe-stacks \
     --stack-name omni-serverless \
-    --query 'Stacks[].Outputs[?OutputKey==`HelloWorldApi`]' \
+    --query 'Stacks[].Outputs[?OutputKey==`CuencaShippingApi`]' \
     --output table
 ``` 
 
@@ -107,7 +107,7 @@ To simplify troubleshooting, SAM CLI has a command called sam logs. sam logs let
 `NOTE`: This command works for all AWS Lambda functions; not just the ones you deploy using SAM.
 
 ```bash
-sam logs -n HelloWorldFunction --stack-name omni-serverless --tail
+sam logs -n CuencaShippingFunction --stack-name omni-serverless --tail
 ```
 
 You can find more information and examples about filtering Lambda function logs in the [SAM CLI Documentation](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-logging.html).
@@ -138,12 +138,12 @@ Here are a few things you can try to get more acquainted with building serverles
 
 * Uncomment lines on `app.py`
 * Build the project with ``sam build --use-container``
-* Invoke with ``sam local invoke HelloWorldFunction --event event.json``
+* Invoke with ``sam local invoke CuencaShippingFunction --event event.json``
 * Update tests
 
 ### Create an additional API resource
 
-* Create a catch all resource (e.g. /hello/{proxy+}) and return the name requested through this new path
+* Create a catch all resource (e.g. /cuenca-shipping/address/{proxy+}) and return the name requested through this new path
 * Update tests
 
 ### Step-through debugging
@@ -179,7 +179,7 @@ All commands used throughout this document
 sam local generate-event apigateway aws-proxy > event.json
 
 # Invoke function locally with event.json as an input
-sam local invoke HelloWorldFunction --event event.json
+sam local invoke CuencaShippingFunction --event event.json
 
 # Run API Gateway locally
 sam local start-api
@@ -201,10 +201,10 @@ sam deploy \
 # Describe Output section of CloudFormation stack previously created
 aws cloudformation describe-stacks \
     --stack-name omni-serverless \
-    --query 'Stacks[].Outputs[?OutputKey==`HelloWorldApi`]' \
+    --query 'Stacks[].Outputs[?OutputKey==`CuencaShippingApi`]' \
     --output table
 
 # Tail Lambda function Logs using Logical name defined in SAM Template
-sam logs -n HelloWorldFunction --stack-name omni-serverless --tail
+sam logs -n CuencaShippingFunction --stack-name omni-serverless --tail
 ```
 
