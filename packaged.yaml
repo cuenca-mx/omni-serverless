@@ -27,11 +27,11 @@ Outputs:
 Resources:
   CuencaShippingFunction:
     Properties:
-      CodeUri: s3://omni-serverless.cuenca.io/506648c98a4f4f9da8e5401eddf8bc9c
+      CodeUri: s3://omni-serverless.cuenca.io/9c9b3c3d3888975e66c7076eea34e314
       Environment:
         Variables:
-          CORS_ORIGIN: http://localhost:3333
-          MONGO_URI: mongodb://192.168.0.111:27017/
+          CORS_ORIGIN: http://localhost:9000
+          MONGO_URI: mongodb://10.98.39.175:27017/
       Events:
         CuencaShipping:
           Properties:

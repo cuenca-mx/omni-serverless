@@ -37,7 +37,7 @@ build:
 	sam build
 
 serve: build
-	sam local start-api
+	sam local start-api -p 3001
 
 invoke: build
 	sam local invoke CuencaShippingFunction --event event.json
