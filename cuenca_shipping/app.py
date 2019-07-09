@@ -1,27 +1,12 @@
+import datetime
 import json
 import os
 
 from mongoengine import *
-connect('db', host=os.environ['MONGO_URI'])
+connect('omni', host=os.environ['MONGO_URI'])
 
-class CuencaShipping(DynamicDocument):
-    clientId = StringField(required=True)
-    street = StringField(required=True)
-    neighborhood = StringField(required=True)
-    zipCode = StringField(required=True)
-    latitude = StringField(required=True)
-    longitude = StringField(required=True)
-    externalNumber = StringField(required=True)
-    internalNumber = StringField()
-    comment = StringField()
-    googleResult = DictField(required=True)
-
-
-def validatePayload(payload: dict) -> dict:
-    validfields = set(CuencaShipping._fields) & set(payload)
-    payload = {k:payload[k] for k in validfields}
-    return payload
-
+class CustomerForCard(DynamicDocument):
+    pass
 
 def respond(err, res=None):
     return {
@@ -39,14 +24,21 @@ def lambda_handler(event, context):
     if event['httpMethod'] == "POST":
         try:
             payload = json.loads(event['body'])
-            try:
-                payload = validatePayload(json.loads(event['body']))
-                address = CuencaShipping(**payload)
-                address.save()
-                return respond(None, {"success": True})
-            except ValidationError as e:
-                return respond(e.to_dict())
+            customer_for_card =  CustomerForCard.objects(
+                client_id=payload['client_id'],
+                entered_address=False
+            )
+            if customer_for_card:
+                customer_for_card.update(**dict(
+                    geocoding_gmaps=payload['geocoding_gmaps'],
+                    entered_address=True,
+                    updated_at=datetime.datetime.utcnow()
+                ))
+                return respond(None, dict(message=True))
+            else:
+                return respond(dict(message="client_id does not exist"))
+            
         except Exception as e:
-            return respond({"message": "Incorrect request body"})
+            return respond(dict(message="Incorrect request body"))
     else:
-        return respond(None, {"success": True})
+        return respond(None, dict(message="method no allowed"))
