@@ -27,7 +27,7 @@ Outputs:
 Resources:
   CuencaShippingFunction:
     Properties:
-      CodeUri: s3://omni-serverless.cuenca.io/9c9b3c3d3888975e66c7076eea34e314
+      CodeUri: s3://omni-serverless.cuenca.io/58d4635ad2361f128cfe4ad905cf4f3e
       Environment:
         Variables:
           CORS_ORIGIN: http://localhost:9000
