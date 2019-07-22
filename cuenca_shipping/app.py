@@ -6,7 +6,7 @@ MONGO_URI = os.environ['MONGO_URI']
 CORS_ORIGIN = os.environ['CORS_ORIGIN']
 
 from mongoengine import *
-connect('omni', host=MONGO_URI)
+connect('db', host=MONGO_URI)
 
 class CustomerForCard(DynamicDocument):
     pass
