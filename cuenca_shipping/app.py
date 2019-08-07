@@ -8,7 +8,7 @@ CORS_ORIGIN = os.environ['CORS_ORIGIN']
 from mongoengine import *
 connect('db', host=MONGO_URI)
 
-class CustomerForCard(DynamicDocument):
+class ShipmentInvitations(DynamicDocument):
     pass
 
 def respond(err, res=None):
@@ -27,17 +27,18 @@ def lambda_handler(event, context):
     if event['httpMethod'] == "POST":
         try:
             payload = json.loads(event['body'])
-            customer_for_card =  CustomerForCard.objects(
+            shipment_invitation =  ShipmentInvitations.objects(
                 client_id=payload['client_id'],
-                entered_address=False
+                entered_address=False,
+                shipment_canceled__exists=False
             )
-            if customer_for_card:
+            if shipment_invitation:
                 geocoding_gmaps = payload['geocoding_gmaps']
                 if 'comment' in payload and payload['comment']:
                     geocoding_gmaps['comment'] = payload['comment']
                 if 'internal_number' in payload and payload['internal_number']:
                     geocoding_gmaps['internal_number'] = payload['internal_number']
-                customer_for_card.update(**dict(
+                shipment_invitation.update(**dict(
                     geocoding_gmaps=geocoding_gmaps,
                     entered_address=True,
                     updated_at=datetime.datetime.utcnow()
