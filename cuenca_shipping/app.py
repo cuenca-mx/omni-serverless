@@ -2,7 +2,7 @@ import datetime
 import json
 import os
 
-from mongoengine import DynamicDocument
+from mongoengine import connect, DynamicDocument
 
 MONGO_URI = os.environ['MONGO_URI']
 CORS_ORIGIN = os.environ['CORS_ORIGIN']

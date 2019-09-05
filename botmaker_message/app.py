@@ -1,7 +1,7 @@
 import json
 import os
 
-from mongoengine import DynamicDocument
+from mongoengine import connect, DynamicDocument
 
 MONGO_URI = os.environ['MONGO_URI']
 
