@@ -7,7 +7,7 @@ from mongoengine import connect, DynamicDocument
 MONGO_URI = os.environ['MONGO_URI']
 CORS_ORIGIN = os.environ['CORS_ORIGIN']
 
-connect('db', host=MONGO_URI)
+connect('db', host=MONGO_URI, serverSelectionTimeoutMS=3000)
 
 class ShipmentInvitations(DynamicDocument):
     pass
@@ -47,8 +47,9 @@ def lambda_handler(event, context):
                 return respond(None, dict(message=True))
             else:
                 return respond(dict(message="client_id does not exist"))
-            
-        except Exception as e:
+        except json.decoder.JSONDecodeError:
             return respond(dict(message="Incorrect request body"))
+        except ServerSelectionTimeoutError:
+            return respond(dict(message="No connection to mongo"))
     else:
         return respond(None, dict(message="method no allowed"))

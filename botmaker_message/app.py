@@ -1,11 +1,14 @@
 import json
 import os
 
-from mongoengine import connect, DynamicDocument
+from mongoengine import connect, errors
+from mongoengine import DynamicDocument
+
+from pymongo.errors import ServerSelectionTimeoutError
 
 MONGO_URI = os.environ['MONGO_URI']
 
-connect('db', host=MONGO_URI)
+connect('db', host=MONGO_URI, serverSelectionTimeoutMS=3000)
 
 class BotmakerMessages(DynamicDocument):
     pass
@@ -25,5 +28,7 @@ def lambda_handler(event, context):
         botmaker =  BotmakerMessages(**payload)
         botmaker.save()
         return respond(None, dict(success=True))
-    except Exception as e:
+    except json.decoder.JSONDecodeError:
         return respond(dict(message="Incorrect request body"))
+    except ServerSelectionTimeoutError:
+        return respond(dict(message="No connection to mongo"))
