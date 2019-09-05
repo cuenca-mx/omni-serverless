@@ -24,7 +24,7 @@ def respond(err, res=None):
         },
     }
 
-def lambda_handler(event, context):
+def cuenca_shipping(event, context):
     if event['httpMethod'] == "POST":
         try:
             payload = json.loads(event['body'])

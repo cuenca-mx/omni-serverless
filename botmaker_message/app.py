@@ -22,7 +22,7 @@ def respond(err, res=None):
         },
     }
 
-def lambda_handler(event, context):
+def botmaker_message(event, context):
     try:
         payload = json.loads(event['body'])
         botmaker =  BotmakerMessages(**payload)
