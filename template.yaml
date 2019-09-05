@@ -5,14 +5,13 @@ Description: >
 
   Sample SAM Template for omni-serverless
 
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Timeout: 3
 
 Resources:
   CuencaShippingFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
       CodeUri: cuenca_shipping/
       Handler: app.lambda_handler
@@ -23,17 +22,17 @@ Resources:
           CORS_ORIGIN: http://0.0.0.0:9000
       Events:
         CuencaShipping:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
             Path: /cuenca-shipping/address
             Method: post
         CuencaShippingCors:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
             Path: /cuenca-shipping/address
             Method: options
   BotmakerMessageFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
       CodeUri: botmaker_message/
       Handler: app.lambda_handler
@@ -43,15 +42,12 @@ Resources:
           MONGO_URI: mongodb://0.0.0.0:27017/
       Events:
         CuencaShipping:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
             Path: /botmaker/message
             Method: post
 
 Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   CuencaShippingApi:
     Description: "Api Cuenca Shipping"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/cuenca-shipping/address"

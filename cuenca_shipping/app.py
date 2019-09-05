@@ -2,10 +2,11 @@ import datetime
 import json
 import os
 
+from mongoengine import DynamicDocument
+
 MONGO_URI = os.environ['MONGO_URI']
 CORS_ORIGIN = os.environ['CORS_ORIGIN']
 
-from mongoengine import *
 connect('db', host=MONGO_URI)
 
 class ShipmentInvitations(DynamicDocument):
