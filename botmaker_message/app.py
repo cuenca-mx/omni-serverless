@@ -1,9 +1,7 @@
 import json
 import os
 
-from mongoengine import connect, errors
-from mongoengine import DynamicDocument
-
+from mongoengine import connect, DynamicDocument
 from pymongo.errors import ServerSelectionTimeoutError
 
 MONGO_URI = os.environ['MONGO_URI']

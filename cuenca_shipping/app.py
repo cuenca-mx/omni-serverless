@@ -25,31 +25,29 @@ def respond(err, res=None):
     }
 
 def cuenca_shipping(event, context):
-    if event['httpMethod'] == "POST":
-        try:
-            payload = json.loads(event['body'])
-            shipment_invitation =  ShipmentInvitations.objects(
-                client_id=payload['client_id'],
-                entered_address=False,
-                shipment_canceled__exists=False
-            )
-            if shipment_invitation:
-                geocoding_gmaps = payload['geocoding_gmaps']
-                if 'comment' in payload and payload['comment']:
-                    geocoding_gmaps['comment'] = payload['comment']
-                if 'internal_number' in payload and payload['internal_number']:
-                    geocoding_gmaps['internal_number'] = payload['internal_number']
-                shipment_invitation.update(**dict(
-                    geocoding_gmaps=geocoding_gmaps,
-                    entered_address=True,
-                    updated_at=datetime.datetime.utcnow()
-                ))
-                return respond(None, dict(message=True))
-            else:
-                return respond(dict(message="client_id does not exist"))
-        except json.decoder.JSONDecodeError:
-            return respond(dict(message="Incorrect request body"))
-        except ServerSelectionTimeoutError:
-            return respond(dict(message="No connection to mongo"))
-    else:
+    if event['httpMethod'] != "POST":
         return respond(None, dict(message="method no allowed"))
+    try:
+        payload = json.loads(event['body'])
+        shipment_invitation =  ShipmentInvitations.objects(
+            client_id=payload['client_id'],
+            entered_address=False,
+            shipment_canceled__exists=False
+        )
+        if not shipment_invitation:
+            return respond(dict(message="client_id does not exist"))
+        geocoding_gmaps = payload['geocoding_gmaps']
+        if 'comment' in payload and payload['comment']:
+            geocoding_gmaps['comment'] = payload['comment']
+        if 'internal_number' in payload and payload['internal_number']:
+            geocoding_gmaps['internal_number'] = payload['internal_number']
+        shipment_invitation.update(
+            geocoding_gmaps=geocoding_gmaps,
+            entered_address=True,
+            updated_at=datetime.datetime.utcnow()
+        )
+        return respond(None, dict(message=True))
+    except json.decoder.JSONDecodeError:
+        return respond(dict(message="Incorrect request body"))
+    except ServerSelectionTimeoutError:
+        return respond(dict(message="No connection to mongo"))
