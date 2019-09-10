@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'omni-serverless
+
+  Sample SAM Template for omni-serverless
+
+  '
+Globals:
+  Function:
+    Timeout: 3
+Outputs:
+  BotmakerMessageApi:
+    Description: Api Botmaker Message
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/botmaker/message
+  CuencaShippingApi:
+    Description: Api Cuenca Shipping
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/cuenca-shipping/address
+Resources:
+  BotmakerMessageFunction:
+    Properties:
+      CodeUri: s3://omni-serverless.cuenca.io/3c754f49836826d39576ac79e938db4f
+      Environment:
+        Variables:
+          MONGO_URI: mongodb://0.0.0.0:27017/
+      Events:
+        CuencaShipping:
+          Properties:
+            Method: post
+            Path: /botmaker/message
+          Type: Api
+      Handler: app.lambda_handler
+      Runtime: python3.7
+    Type: AWS::Serverless::Function
+  CuencaShippingFunction:
+    Properties:
+      CodeUri: s3://omni-serverless.cuenca.io/1d6d365d1f6474104b15ab6918fea368
+      Environment:
+        Variables:
+          CORS_ORIGIN: http://0.0.0.0:9000
+          MONGO_URI: mongodb://0.0.0.0:27017/
+      Events:
+        CuencaShipping:
+          Properties:
+            Method: post
+            Path: /cuenca-shipping/address
+          Type: Api
+        CuencaShippingCors:
+          Properties:
+            Method: options
+            Path: /cuenca-shipping/address
+          Type: Api
+      Handler: app.lambda_handler
+      Runtime: python3.7
+    Type: AWS::Serverless::Function
+Transform: AWS::Serverless-2016-10-31
