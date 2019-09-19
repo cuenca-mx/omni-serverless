@@ -9,7 +9,11 @@ MONGO_URI = os.environ['MONGO_URI']
 connect('db', host=MONGO_URI, serverSelectionTimeoutMS=3000)
 
 class BotmakerMessages(DynamicDocument):
-    pass
+    meta = {
+        'indexes': [
+            {'fields': ['$date']}
+        ]
+    }
 
 def respond(err, res=None):
     return {
@@ -23,8 +27,30 @@ def respond(err, res=None):
 def botmaker_message(event, context):
     try:
         payload = json.loads(event['body'])
-        botmaker =  BotmakerMessages(**payload)
-        botmaker.save()
+        if 'LAST_MESSAGE' in payload:
+            message = payload['LAST_MESSAGE']
+            search_date = message['date'].split(".")[0]
+            
+            botmaker_message =  BotmakerMessages.objects(
+                message_id=message['_id_']
+            )
+            if not botmaker_message:
+                botmaker_message =  BotmakerMessages.objects(
+                    contactId=message['contactId'],
+                    message=message['message']
+
+                ).search_text(search_date).first()
+
+            if botmaker_message:
+                botmaker_message.update(
+                    date=message['date'],
+                    chatPlatform=message['chatPlatform'],
+                    customerId=message['customerId'],
+                    message_status=payload['STATUS']
+                )
+        else:     
+            botmaker =  BotmakerMessages(**payload)
+            botmaker.save()
         return respond(None, dict(success=True))
     except json.decoder.JSONDecodeError:
         return respond(dict(message="Incorrect request body"))
