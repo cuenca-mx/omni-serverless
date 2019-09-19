@@ -6,7 +6,7 @@ Description: 'omni-serverless
   '
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 5
 Outputs:
   BotmakerMessageApi:
     Description: Api Botmaker Message
@@ -19,7 +19,7 @@ Outputs:
 Resources:
   BotmakerMessageFunction:
     Properties:
-      CodeUri: s3://omni-serverless.cuenca.io/3c754f49836826d39576ac79e938db4f
+      CodeUri: s3://omni-serverless.cuenca.io/5b335ca0ccdd2eb974aa082724e638c8
       Environment:
         Variables:
           MONGO_URI: mongodb://0.0.0.0:27017/
@@ -29,12 +29,12 @@ Resources:
             Method: post
             Path: /botmaker/message
           Type: Api
-      Handler: app.lambda_handler
+      Handler: app.botmaker_message
       Runtime: python3.7
     Type: AWS::Serverless::Function
   CuencaShippingFunction:
     Properties:
-      CodeUri: s3://omni-serverless.cuenca.io/1d6d365d1f6474104b15ab6918fea368
+      CodeUri: s3://omni-serverless.cuenca.io/18f0bd0d0ca91cf661862ed0a7372fb1
       Environment:
         Variables:
           CORS_ORIGIN: http://0.0.0.0:9000
@@ -50,7 +50,7 @@ Resources:
             Method: options
             Path: /cuenca-shipping/address
           Type: Api
-      Handler: app.lambda_handler
+      Handler: app.cuenca_shipping
       Runtime: python3.7
     Type: AWS::Serverless::Function
 Transform: AWS::Serverless-2016-10-31
