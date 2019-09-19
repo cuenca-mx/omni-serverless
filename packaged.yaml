@@ -19,7 +19,7 @@ Outputs:
 Resources:
   BotmakerMessageFunction:
     Properties:
-      CodeUri: s3://omni-serverless.cuenca.io/d1324332f08c1ee1da24f766f4b30972
+      CodeUri: s3://omni-serverless.cuenca.io/bed09cc28ce1f8ca1f860c595530b0c4
       Environment:
         Variables:
           MONGO_URI: mongodb://0.0.0.0:27017/
@@ -34,7 +34,7 @@ Resources:
     Type: AWS::Serverless::Function
   CuencaShippingFunction:
     Properties:
-      CodeUri: s3://omni-serverless.cuenca.io/963ad99e31697738a8bbaeaafdf8d6d8
+      CodeUri: s3://omni-serverless.cuenca.io/033835b3bce88c8b59324e8b1caadf1c
       Environment:
         Variables:
           CORS_ORIGIN: http://0.0.0.0:9000

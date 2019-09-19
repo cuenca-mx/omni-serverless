@@ -58,7 +58,8 @@ def botmaker_message(event, context):
             elif message["fromName"] == "Bot":
                 botmaker =  BotmakerMessages(
                     **message,
-                    message_id=message['_id_']
+                    message_id=message['_id_'],
+                    message_status=payload['STATUS']
                 )
                 botmaker.save()
 
