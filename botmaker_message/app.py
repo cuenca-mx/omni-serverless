@@ -45,18 +45,21 @@ def botmaker_message(event, context):
                 botmaker_message =  BotmakerMessages.objects(
                     contactId=message['contactId'],
                     message=message['message']
-
                 ).search_text(search_date).first()
 
             if botmaker_message:
                 botmaker_message.update(
+                    message_id=message['_id_'],
                     date=message['date'],
                     chatPlatform=message['chatPlatform'],
                     customerId=message['customerId'],
-                    message_status=payload['STATUS']
+                    message_status=payload['STATUS'],
                 )
             elif message["fromName"] == "Bot":
-                botmaker =  BotmakerMessages(**message)
+                botmaker =  BotmakerMessages(
+                    **message,
+                    message_id=message['_id_']
+                )
                 botmaker.save()
 
             botmaker_status =  BotmakerStatus(**payload)
