@@ -8,12 +8,18 @@ MONGO_URI = os.environ['MONGO_URI']
 
 connect('db', host=MONGO_URI, serverSelectionTimeoutMS=3000)
 
+
 class BotmakerMessages(DynamicDocument):
     meta = {
         'indexes': [
             {'fields': ['$date']}
         ]
     }
+
+
+class BotmakerStatus(DynamicDocument):
+    pass
+
 
 def respond(err, res=None):
     return {
@@ -23,6 +29,7 @@ def respond(err, res=None):
             'Content-Type': 'application/json'
         },
     }
+
 
 def botmaker_message(event, context):
     try:
@@ -48,6 +55,9 @@ def botmaker_message(event, context):
                     customerId=message['customerId'],
                     message_status=payload['STATUS']
                 )
+
+            botmaker_status =  BotmakerStatus(**payload)
+            botmaker_status.save()
         else:     
             botmaker =  BotmakerMessages(**payload)
             botmaker.save()
