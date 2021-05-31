@@ -29,8 +29,8 @@ def respond(err, res=None):
 def botmaker_message(event, context):
     try:
         payload = json.loads(event['body'])
-        #botmaker =  BotmakerMessages(**payload)
-        #botmaker.save()
+        botmaker =  BotmakerMessages(**payload)
+        botmaker.save()
         if SANDBOX_MODE and SANDBOX_URL:
             try:
                 requests.post(
