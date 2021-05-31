@@ -40,6 +40,8 @@ Resources:
       Environment:
         Variables:
           MONGO_URI: mongodb://0.0.0.0:27017/
+          SANDBOX_MODE: false
+          SANDBOX_URL: https://example.com
       Events:
         CuencaShipping:
           Type: Api

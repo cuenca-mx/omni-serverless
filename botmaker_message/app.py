@@ -1,15 +1,20 @@
 import json
 import os
+import requests
 
 from mongoengine import connect, DynamicDocument
 from pymongo.errors import ServerSelectionTimeoutError
 
 MONGO_URI = os.environ['MONGO_URI']
+SANDBOX_URL = os.environ.get('SANDBOX_URL', None)
+SANDBOX_MODE = True if os.environ.get('SANDBOX_MODE', 'false') == 'true' else False
 
 connect('db', host=MONGO_URI, serverSelectionTimeoutMS=3000)
 
+
 class BotmakerMessages(DynamicDocument):
     pass
+
 
 def respond(err, res=None):
     return {
@@ -20,11 +25,21 @@ def respond(err, res=None):
         },
     }
 
+
 def botmaker_message(event, context):
     try:
         payload = json.loads(event['body'])
-        botmaker =  BotmakerMessages(**payload)
-        botmaker.save()
+        #botmaker =  BotmakerMessages(**payload)
+        #botmaker.save()
+        if SANDBOX_MODE and SANDBOX_URL:
+            try:
+                requests.post(
+                    SANDBOX_URL,
+                    json=payload,
+                    headers=event['headers']
+                )
+            except Exception as e:
+                pass
         return respond(None, dict(success=True))
     except json.decoder.JSONDecodeError:
         return respond(dict(message="Incorrect request body"))

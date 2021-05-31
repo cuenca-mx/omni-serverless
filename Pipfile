@@ -8,5 +8,5 @@ verify_ssl = true
 [packages]
 pytest = "*"
 pytest-mock = "*"
-requests = "*"
+requests = "==2.25.1"
 mongoengine = "==0.16.3"
