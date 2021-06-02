@@ -33,10 +33,11 @@ def botmaker_message(event, context):
         botmaker.save()
         if SANDBOX_MODE and SANDBOX_URL:
             try:
+                auth_bm_token = event['headers'].get('auth-bm-token', '')
                 requests.post(
                     SANDBOX_URL,
                     json=payload,
-                    headers=event['headers']
+                    headers={"auth-bm-token": auth_bm_token}
                 )
             except Exception as e:
                 pass
